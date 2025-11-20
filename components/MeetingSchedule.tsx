@@ -1,4 +1,4 @@
-
+import jsPDF from "jspdf";
 import React, { useState } from 'react';
 import { MeetingData, ParticipationType, Publisher, SpecialEvent, EventTemplate } from '../types';
 import { EyeIcon, PencilIcon, TrashIcon, PaperAirplaneIcon } from './icons';
@@ -19,6 +19,19 @@ interface TimedRowProps {
     event: TimedEvent;
     publishers: Publisher[];
 }
+
+const exportToPDF = (schedule: any, week: string) => {
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text(`Reunião Vida e Ministério - ${week}`, 20, 20);
+  doc.setFontSize(12);
+  let y = 40;
+  schedule.schedule.forEach((item: any) => {
+    doc.text(`${item.part} - ${item.publisher} ${item.assistant ? " / " + item.assistant : ""} (${item.duration} min)`, 20, y);
+    y += 10;
+  });
+  doc.save(`pauta-${week}.pdf`);
+};
 
 const TimedRow: React.FC<TimedRowProps> = ({ event, publishers }) => {
     const { startTime, partTitle, publisherName, durationText, isCounseling, rawPart } = event;
